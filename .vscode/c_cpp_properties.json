@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "devkitPro arm-none-eabi",
+            "includePath": [
+                "C:/devkitPro/devkitARM/arm-none-eabi/include/**",
+                "C:/devkitPro/devkitARM/lib/gcc/arm-none-eabi/15.1.0/include/**",
+                "C:/devkitPro/libctru/include/**",
+                "include"
+            ],
+            "defines": [
+                "SWITCH",
+                "__SWITCH__",
+                "DEBUG"
+            ],
+            "compilerPath": "C:/devkitPro/devkitA64/bin/aarch64-none-elf-g++",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}
