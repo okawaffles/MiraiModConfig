@@ -10,6 +10,9 @@
 #include <iostream>
 #include <string.h>
 
+#define MESY_VERSION "1.0.0"
+
+
 static const char* last_error = NULL;
 static std::string mesy_keys[256];
 static std::string mesy_vals[256];
@@ -42,10 +45,12 @@ int LoadMESY(const char* filename)
     std::string line;
     while (std::getline(mesyfile, line))
     {
+        if (line.empty() || line.find_first_not_of(' ') != std::string::npos || line[0] == '>') continue; // skip empty lines and comments
+
         if (entry > 255)
         {
-            last_error = "Too many entries in MESY file. MESY only supports up to 256 entries.";
-            return -1;
+            last_error = "Too many entries in MESY file. MESY only supports up to 256 entries. The first 256 entries are available, but the rest will be ignored.";
+            return -2;
         }
 
         std::stringstream entry_name;

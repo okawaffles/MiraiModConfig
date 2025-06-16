@@ -1,9 +1,14 @@
+> for mesy test at start (actually works on 3ds???)
 MESY_LOADER_TEST:{{MESY is working correctly.}}
+
+> appended to pv_db_no_042.txt
 pre_bpm:{{pv_042.bpm=}}
 pre_name:{{pv_042.song_name=}}
 pre_name_reading:{{pv_042.song_name_reading=}}
-button_chart_file:{{pv_042.difficulty.hard.script_file_name=mmc/button_chart.dsc}}
-touch_chart_file:{{pv_042.difficulty.hard.touch_mode_script=mmc/touch_cart.dsc}}
+button_chart_file:{{pv_042.difficulty.normal.script_file_name=mmc/button_chart.dsc}}
+touch_chart_file:{{pv_042.difficulty.normal.touch_mode_script=mmc/touch_cart.dsc}}
+
+> file paths for each resource needed
 stream_file:{{romfs/stream/PV042_MIX.dspadpcm.bcstm}}
 lfs_bin_aet:{{romfs/aet/aet_pv042.bin}}
 lfs_bin_spr:{{romfs/aet/spr_ae_pv042.bin}}
