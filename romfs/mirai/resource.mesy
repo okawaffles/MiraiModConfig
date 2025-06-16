@@ -1,3 +1,4 @@
+MESY_LOADER_TEST:{{MESY is working correctly.}}
 pre_bpm:{{pv_042.bpm=}}
 pre_name:{{pv_042.song_name=}}
 pre_name_reading:{{pv_042.song_name_reading=}}

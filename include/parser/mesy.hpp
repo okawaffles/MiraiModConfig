@@ -28,9 +28,13 @@ const char* GetLastError()
 // This will clear all other MESY keys currently held in memory.
 int LoadMESY(const char* filename)
 {
-    std::fstream mesyfile(filename);
+    mesy_keys->clear();
+    mesy_vals->clear();
+    last_error = "";
+
+    std::ifstream mesyfile(filename);
     if (!mesyfile.is_open()) {
-        last_error = "File not found.";
+        last_error = "Could not open file.";
         return -1;
     }
 
@@ -101,6 +105,7 @@ int LoadMESY(const char* filename)
     return 0;
 }
 
+// Clear all
 void UnloadMESY()
 {
     mesy_keys->clear();
@@ -118,4 +123,34 @@ void GetAllKVItems(std::string* keys[], std::string* values[])
     }
 }
 
+// Get a specific value by its corresponding key name
+int GetValueByKeyName(std::string name, std::string* value)
+{
+    size_t item = 0;
+    int compare_fail = 1;
+    while (compare_fail)
+    {
+        if (item >= mesy_keys->length()) 
+        {
+            std::stringstream t;
+            t << "item index of " << item << " is larger than key count of " << mesy_keys->length();
+            last_error = t.str().c_str();
+            return -1;
+        }
+
+        compare_fail = strcmp(mesy_keys[item].c_str(), name.c_str());
+
+        if (!compare_fail) 
+        {
+            *value = mesy_vals[item];
+            return 0;
+        }
+
+        item++;
+    }
+
+    last_error = "compare succeeded without return? this is unintended behavior.";
+    return -1;
 }
+
+} // namespace MESY

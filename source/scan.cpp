@@ -37,17 +37,18 @@ void ScanForMirai()
     // allocate memory for title IDs
     u64* titleIds_NAND = (u64*)malloc(title_count_nand * sizeof(u64));
     u64* titleIds_SD = (u64*)malloc(title_count_sd * sizeof(u64));
-    u64* titleIds_CARD = (u64*)malloc(title_count_card * sizeof(u64));
+    u64* titleIds_CARD;
+    if (card_inserted) titleIds_CARD = (u64*)malloc(title_count_card * sizeof(u64));
     AM_TitleEntry* titleInfo = (AM_TitleEntry*)malloc(title_count_nand * sizeof(AM_TitleEntry));
 
     // get title list
     AM_GetTitleList(&title_count_nand, MEDIATYPE_NAND, title_count_nand, titleIds_NAND);
     AM_GetTitleList(&title_count_sd, MEDIATYPE_SD, title_count_sd, titleIds_SD);
-    AM_GetTitleList(&title_count_card, MEDIATYPE_GAME_CARD, title_count_card, titleIds_CARD);
+    if (card_inserted) AM_GetTitleList(&title_count_card, MEDIATYPE_GAME_CARD, title_count_card, titleIds_CARD);
 
     AM_GetTitleInfo(MEDIATYPE_NAND, title_count_nand, titleIds_NAND, titleInfo);
     AM_GetTitleInfo(MEDIATYPE_SD, title_count_sd, titleIds_SD, titleInfo);
-    AM_GetTitleInfo(MEDIATYPE_GAME_CARD, title_count_card, titleIds_CARD, titleInfo);
+    if (card_inserted) AM_GetTitleInfo(MEDIATYPE_GAME_CARD, title_count_card, titleIds_CARD, titleInfo);
 
     printf(" \nScanning NAND...\n");
 

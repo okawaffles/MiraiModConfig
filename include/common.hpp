@@ -4,6 +4,7 @@
 #include <3ds.h>
 #include <stdio.h>
 #include <iostream>
+#include <sstream>
 
 
 #define SCREEN_WIDTH_TOP 400

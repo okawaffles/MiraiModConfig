@@ -13,7 +13,7 @@
                 "__SWITCH__",
                 "DEBUG"
             ],
-            "compilerPath": "C:/devkitPro/devkitA64/bin/aarch64-none-elf-g++",
+            "compilerPath": "c:/devkitPro/devkitARM/bin/arm-none-eabi-gcc.exe",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "gcc-x64"
