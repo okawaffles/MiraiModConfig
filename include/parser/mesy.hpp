@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include <string.h>
+#include <map>
 
 #define MESY_VERSION "1.0.0"
 

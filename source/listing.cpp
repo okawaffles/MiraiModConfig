@@ -4,15 +4,66 @@
 // however, do 128 custom charts even exist for this game yet?
 static std::string charts[128];
 
+#define LISTING_DEBUG
 namespace Listing
 {
 
-int GetChartListingCount()
+int GetChartListingCount(size_t *count)
 {
-    // right now i'm only testing with 1 chart so i just need to return 1
-    // i will have it actually read later
-    charts[0] = "BBF";
-    return 1;
+    DIR *dir;
+    struct dirent* ent;
+
+    dir = opendir("sdmc:/miraimods/charts");
+    if (dir == NULL)
+    {
+        std::cout << "miraimods/charts folder does not exist, creating..." << std::endl;
+        mkdir("sdmc:/miraimods", 0777);
+        mkdir("sdmc:/miraimods/charts", 0777);
+
+        dir = opendir("sdmc:/miraimods/charts");
+        if (dir == NULL)
+        {
+            std::cout << "ERROR: Could not create/open directory:\n-> sdmc:/miraimods/charts <-" << std::endl;
+            return -1;
+        }
+    }
+
+    *count = 0;
+    while ((ent = readdir(dir)))
+    {
+        // if it's not a directory, skip it
+        if (ent->d_type != DT_DIR) continue;
+        
+        // check schema to make sure it's a v1 chart meta file
+        std::stringstream path;
+        path << "sdmc:/miraimods/charts/" << ent->d_name << "/meta.mesy";
+
+        int mesy_load_rc = MESY::LoadMESY(path.str().c_str());
+        if (mesy_load_rc != 0) {
+#ifdef LISTING_DEBUG
+            std::cout << "Error loading meta.mesy for chart \"" << ent->d_name << "\" with error " << mesy_load_rc << std::endl;
+#endif
+            continue; // mesy load failure, skip
+        }
+        std::string schema;
+        std::string schema_ver;
+        mesy_load_rc += MESY::GetValueByKeyName("mmc_type", &schema);
+        std::cout << MESY::GetLastError() << std::endl;
+        mesy_load_rc += MESY::GetValueByKeyName("mmc_schema_ver", &schema_ver);
+        std::cout << MESY::GetLastError() << std::endl;
+        if (mesy_load_rc != 0 || schema != "chart" || schema_ver != "1") {
+#ifdef LISTING_DEBUG
+            std::cout << "Error getting schema info for chart \"" << ent->d_name << "\" with error " << mesy_load_rc << std::endl;
+#endif
+            continue; // mesy key-get failure or wrong schema
+        }
+
+        count++;
+        charts[*count] = ent->d_name;
+    }
+
+    closedir(dir);
+    return 0;
 }
 
 Result ReadChartAt(uint8_t index, ChartMod* chart)

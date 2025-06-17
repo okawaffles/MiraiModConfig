@@ -1,0 +1,24 @@
+> These properties are required for MiraiModConfig
+> to see your chart. It will ignore it otherwise.
+name:{{Song Name}}
+artist:{{Song Artist(s)}}
+charter:{{Chart Creator}}
+bpm:{{BPM}}
+level:{{Level}}
+type:{{Button/Tap}}
+
+> These properties are optional but recommended
+> that you set them regardless.
+> Change them based on if you have custom versions
+> of these files. If you don't, don't worry! MiraiModConfig
+> comes with defaults that it will use instead.
+has_custom_aet:{{no}}
+has_custom_spr:{{no}}
+has_custom_obj:{{no}}
+has_lyrics_file:{{no}}
+
+> Don't touch these properties!
+> They serve to tell MiraiModConfig what type of
+> mod this meta file is for.
+mmc_type:{{chart}}
+mmc_schema_ver:{{1}}

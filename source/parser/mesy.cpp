@@ -1,8 +1,7 @@
 #include "parser/mesy.hpp"
 
 static const char* last_error = NULL;
-static std::string mesy_keys[256];
-static std::string mesy_vals[256];
+static std::map<std::string, std::string> pairs;
 
 #define MESY_DEBUG
 
@@ -20,6 +19,8 @@ const char* GetLastError()
 // This will clear all other MESY keys currently held in memory.
 int LoadMESY(const char* filename)
 {
+    pairs.clear();
+
     std::ifstream mesyfile(filename);
     if (!mesyfile.is_open()) {
         last_error = "File not found.";
@@ -94,8 +95,11 @@ int LoadMESY(const char* filename)
         }
 
         // reached }}, add key/value to array
-        mesy_keys[entry] = entry_name.str();
-        mesy_vals[entry] = entry_value.str();
+        pairs[entry_name.str()] = entry_value.str();
+        
+#ifdef MESY_DEBUG
+        std::cout << "NEW ENTRY" << entry << ": " << entry_name.str() << " => " << entry_value.str() << std::endl;
+#endif
 
         entry++;
     }
@@ -106,49 +110,37 @@ int LoadMESY(const char* filename)
 // Clear all
 void UnloadMESY()
 {
-    mesy_keys->clear();
-    mesy_vals->clear();
+    pairs.clear();
     last_error = "";
 }
 
 // Copy all MESY entries held in memory to a specified string array pointer.
 void GetAllKVItems(std::string* keys[], std::string* values[])
 {
-    for (size_t i = 0; i < mesy_keys->length(); i++)
-    {
-        *keys[i]   = mesy_keys[i];
-        *values[i] = mesy_vals[i];
-    }
+    // fix later
+    return;
+    // for (size_t i = 0; i < pairs.size(); i++)
+    // {
+    //     *keys[i]   = pairs[i];
+    //     *values[i] = mesy_vals[i];
+    // }
 }
 
 // Get a specific value by its corresponding key name
 int GetValueByKeyName(std::string name, std::string* value)
 {
-    size_t item = 0;
-    int compare_fail = 1;
-    while (compare_fail)
-    {
-        if (item >= mesy_keys->length()) 
-        {
-            std::stringstream t;
-            t << "item index of " << item << " is larger than key count of " << mesy_keys->length();
-            last_error = t.str().c_str();
-            return -1;
-        }
-
-        compare_fail = strcmp(mesy_keys[item].c_str(), name.c_str());
-
-        if (!compare_fail) 
-        {
-            *value = mesy_vals[item];
-            return 0;
-        }
-
-        item++;
+#ifdef MESY_DEBUG
+    std::cout << "SCAN FOR KEY: " << name << std::endl;
+#endif
+    
+    if (pairs.count(name) == 0)
+    { 
+        last_error = "No key exists by provided name.";
+        return -1;
     }
 
-    last_error = "compare succeeded without return? this is unintended behavior.";
-    return -1;
+    *value = pairs[name];
+    return 0;
 }
 
 } // namespace MESY

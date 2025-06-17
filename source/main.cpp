@@ -9,7 +9,7 @@ static const u64 MIRAI_EU = 0x0004000000148900;
 static const u64 MIRAI_US = 0x0004000000148C00;
 static const u64 MIRAI_JP = 0x000400000014A800;
 
-// #define DEBUG
+#define DEBUG
 
 int main()
 {
@@ -165,16 +165,23 @@ int main()
 
         if (ButtonPressed(KEY_B))
         {
-            int num_charts = Listing::GetChartListingCount();
+            size_t num_charts;
+            int success = Listing::GetChartListingCount(&num_charts);
 
-            for (int i = 0; i < num_charts; i++)
+            if (success != 0)
             {
-                ChartMod chart;
-                Listing::ReadChartAt(i, &chart);
-                std::stringstream item;
-                item << chart.song_name << " by " << chart.song_artist << " (charted by " << chart.chart_author << ") BPM: " << chart.bpm << std::endl;
-                printf(item.str().c_str());
+                std::cout << "Error loading charts. See above for error." << std::endl;
+                continue;
             }
+
+            // for (size_t i = 0; i < num_charts; i++)
+            // {
+            //     ChartMod chart;
+            //     Listing::ReadChartAt(i, &chart);
+            //     std::stringstream item;
+            //     item << "--\n" << chart.song_name << " by " << chart.song_artist << "\nCharted by " << chart.chart_author << " | BPM: " << chart.bpm << std::endl;
+            //     printf(item.str().c_str());
+            // }
         }
     }
 
