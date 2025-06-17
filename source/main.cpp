@@ -3,10 +3,13 @@
 #include "button.hpp"
 #include "scan.hpp"
 #include "parser/mesy.hpp"
+#include "listing.hpp"
 
 static const u64 MIRAI_EU = 0x0004000000148900;
 static const u64 MIRAI_US = 0x0004000000148C00;
 static const u64 MIRAI_JP = 0x000400000014A800;
+
+// #define DEBUG
 
 int main()
 {
@@ -15,13 +18,17 @@ int main()
     aptInit();
     hidInit();
     gfxInitDefault();
+    fsInit();
     consoleInit(GFX_TOP, NULL);
 
     Result rc = romfsInit();
     if (rc) printf("romfs init error!! rc=%ld\n", rc);
     else printf("romfs init OK!\n \n");
 
-    printf("MiraiModConfig v1.0.0 by okawaffles\nStarting scan...\n");
+    printf("MiraiModConfig v1.0.0 by okawaffles\nLoading, please wait...\n \n");
+
+#ifdef DEBUG
+    printf("Starting scan...\n");
     ScanForMirai();
     printf("Scan complete!\n \n");
 
@@ -51,15 +58,20 @@ int main()
         printf(MESY::GetLastError());
         printf("\n");
     }
+#else
+    ScanForMirai();
+#endif
     
     sleep(1);
     
     u64 launchId = MIRAI_US;
     FS_MediaType launchContext = MEDIATYPE_SD;
     
-    UpdateButtons();
-    if (!(ButtonPressed(KEY_R) || ButtonHeld(KEY_R))) consoleClear(); // hold R to bypass bootup clear
-    printf("Press X to launch Project Mirai DX.\nPress Y to cycle options.\n \n");
+#ifndef DEBUG
+    consoleClear();
+#endif
+    
+    printf("Press X to launch Project Mirai DX.\nPress Y to cycle options.\nPress B to list charts.\n \n");
     printf("Currently Selected: USA on SD_CARD\n");
 
     bool updateDisplay = false;
@@ -150,14 +162,28 @@ int main()
                 continue;
             }
         }
+
+        if (ButtonPressed(KEY_B))
+        {
+            int num_charts = Listing::GetChartListingCount();
+
+            for (int i = 0; i < num_charts; i++)
+            {
+                ChartMod chart;
+                Listing::ReadChartAt(i, &chart);
+                std::stringstream item;
+                item << chart.song_name << " by " << chart.song_artist << " (charted by " << chart.chart_author << ") BPM: " << chart.bpm << std::endl;
+                printf(item.str().c_str());
+            }
+        }
     }
 
+    fsExit();
     romfsExit();
     srvExit();
     cfguExit();
     hidExit();
     aptExit();
-
     gfxExit();
 
     return 0;
